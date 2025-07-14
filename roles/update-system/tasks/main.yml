@@ -1,0 +1,18 @@
+---
+- name: "Updating system"
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: true
+    autoremove: true
+    autoclean: true
+    cache_valid_time: 3600
+    become: true
+
+- name: "Downloading prerequisite packages"
+  package:
+    name:
+      - zip
+      - unzip
+      - jq
+    state: present
+    become: true

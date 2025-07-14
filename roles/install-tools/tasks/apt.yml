@@ -1,0 +1,17 @@
+- name: "Installing apt packages"
+  ansible.builtin.apt:
+    name:
+      - postgresql
+      - curl
+      - zip
+      - unzip
+      - exiftool
+      - sqlite3
+      - pipenv
+      - htop
+      - neo4j
+      - gh
+      - build-essential
+      - gcc
+    state: present
+    become: true

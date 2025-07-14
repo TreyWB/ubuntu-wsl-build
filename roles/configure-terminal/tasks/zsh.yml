@@ -1,0 +1,71 @@
+- name: "Checking for zshrc"
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+  register: zshrc_check
+
+- name: "Checking for zshrc backup"
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.zshrc.original"
+  register: zshrc_backup_check
+
+- name: "Backing up zshrc"
+  ansible.builtin.copy:
+    src: "{{ ansible_env.HOME }}/.zshrc"
+    dest: "{{ ansible_env.HOME }}/.zshrc.original"
+    group: "{{ ansible_env.USER }}"
+    owner: "{{ ansible_env.USER }}"
+    mode: "0644"
+  when:
+    - zshrc_check.stat.exists
+    - not zshrc_backup_check.stat.exists
+
+- name: "Installing zsh"
+  apt:
+    name:
+      - zsh
+    state: present
+  become: true
+
+- name: "Checking for oh-my-zsh installation"
+  ansible.builtin.stat:
+    path: "/home/{{ ansible_env.USER }}/.oh-my-zsh"
+  register: oh_my_zsh_install_check
+
+- name: "Downloading and installing Oh-My-Zsh"
+  ansible.builtin.shell: |
+    curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh -s -- --unattended
+  args:
+    creates: "/home/{{ ansible_env.USER }}/.oh-my-zsh"
+
+- name: "Setting zsh as the default shell"
+  ansible.builtin.user:
+    name: "{{ ansible_env.USER }}"
+    shell: /bin/zsh
+  become: true
+
+- name: "Installing zsh plugins"
+  ansible.builtin.git:
+    repo: "https://github.com/zsh-users/zsh-autosuggestions"
+    dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+    version: "master"
+  tags:
+    - install-zsh-plugins
+
+- name: "Fetching zshrc from dotfiles"
+  ansible.builtin.copy:
+    src: "{{ ansible_env.HOME }}/dotfiles/wsl-ubuntu/.zshrc"
+    dest: "{{ ansible_env.HOME }}/.zshrc"
+    group: "{{ ansible_env.USER }}"
+    owner: "{{ ansible_env.USER }}"
+    mode: "0644"
+  tags:
+    - install-zshrc
+
+- name: "Installing ohmyposh"
+  ansible.builtin.shell: |
+    curl -s https://ohmyposh.dev/install.sh | bash -s
+
+- name: "Adding ohmyposh to path"
+  ansible.builtin.shell: |
+    export PATH=$PATH:/home/{{ ansible_env.USER }}/.local/bin
+  become: true

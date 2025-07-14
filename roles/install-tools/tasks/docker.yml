@@ -1,0 +1,32 @@
+- name: "Checking for installed docker packages"
+  shell:
+    cmd: "apt list --installed | grep docker | cut -d'/' -f1"
+  register: docker_installed
+  become: true
+  failed_when: false
+
+- name: "Setting docker packages to remove"
+  set_fact:
+    docker_packages_to_remove: "{{ docker_installed.stdout_lines | default([]) }}"
+
+- name: "Removing detected docker packages"
+  package:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ docker_packages_to_remove }}"
+  become: true
+  become_method: sudo
+  when: docker_packages_to_remove | length > 0
+
+- name: "Installing Docker"
+  package:
+    name:
+      - docker.io
+      - docker-compose
+    state: present
+  become: true
+
+- name: "Adding user to docker group"
+  shell:
+    cmd: "sudo usermod -aG docker {{ ansible_user_id }}"
+  become: true

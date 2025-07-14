@@ -1,0 +1,6 @@
+---
+- name: "Configuring tmux"
+  include_tasks: "tmux.yml"
+
+- name: "Configuring zsh"
+  include_tasks: "zsh.yml"
