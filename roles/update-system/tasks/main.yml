@@ -6,7 +6,7 @@
     autoremove: true
     autoclean: true
     cache_valid_time: 3600
-    become: true
+  become: true
 
 - name: "Downloading prerequisite packages"
   package:
@@ -15,4 +15,4 @@
       - unzip
       - jq
     state: present
-    become: true
+  become: true
