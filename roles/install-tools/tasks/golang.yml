@@ -3,18 +3,16 @@
     state: directory
   register: build_dir_temp
 
-- name: "Querying latest go version"
-  ansible.builtin.shell: |
-    VERSION=$(curl -s https://go.dev/dl/?mode=json | jq -r '.[0].version')
-
 - name: "Downloading go"
   ansible.builtin.shell: |
+    VERSION=$(curl -s https://go.dev/dl/?mode=json | jq -r '.[0].version')
     wget https://go.dev/dl/$VERSION.linux-amd64.tar.gz -O {{ build_dir_temp.path }}/go.linux-amd64.tar.gz
 
 - name: "Checking for previous go installation"
   ansible.builtin.stat:
     path: "/usr/local/go"
   register: go_install_check
+  become: true
 
 - name: "Removing previous go installation"
   ansible.builtin.file:
@@ -25,6 +23,7 @@
 - name: "Installing go"
   ansible.builtin.shell: |
     tar -C /usr/local -xzf {{ build_dir_temp.path }}/go.linux-amd64.tar.gz
+  become: true
 
 - name: "Adding go to path"
   ansible.builtin.shell: |
