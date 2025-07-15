@@ -9,5 +9,7 @@
       export PATH="/home/{{ ansible_user_id }}/.local/share/fnm:$PATH"
       eval "`fnm env`"
     fi
+
+- name: "Installing node"
+  ansible.builtin.shell: |
     fnm install --latest
-  become: true
