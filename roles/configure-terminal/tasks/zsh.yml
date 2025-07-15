@@ -58,8 +58,6 @@
     group: "{{ ansible_env.USER }}"
     owner: "{{ ansible_env.USER }}"
     mode: "0644"
-  tags:
-    - install-zshrc
 
 - name: "Installing ohmyposh"
   ansible.builtin.shell: |
@@ -69,3 +67,19 @@
   ansible.builtin.shell: |
     export PATH=$PATH:/home/{{ ansible_env.USER }}/.local/bin
   become: true
+
+- name: "Creating ohmyposh directory"
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/ohmyposh"
+    state: directory
+    mode: "0755"
+    owner: "{{ ansible_env.USER }}"
+    group: "{{ ansible_env.USER }}"
+
+- name: "Fetching ohmyposh theme from dotfiles"
+  ansible.builtin.copy:
+    src: "{{ ansible_env.HOME }}/dotfiles/wsl-ubuntu/.config/ohmyposh/main.toml"
+    dest: "{{ ansible_env.HOME }}/.config/ohmyposh/main.toml"
+    group: "{{ ansible_env.USER }}"
+    owner: "{{ ansible_env.USER }}"
+    mode: "0644"
