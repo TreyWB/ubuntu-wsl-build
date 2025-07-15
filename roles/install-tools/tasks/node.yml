@@ -2,14 +2,11 @@
   ansible.builtin.shell: |
     curl -o- https://fnm.vercel.app/install | bash
 
-- name: "Adding fnm to path & installing node"
+- name: "Setting up fnm environment and installing node"
   ansible.builtin.shell: |
     export FNM_PATH="/home/{{ ansible_user_id }}/.local/share/fnm"
     if [ -d "$FNM_PATH" ]; then
       export PATH="/home/{{ ansible_user_id }}/.local/share/fnm:$PATH"
       eval "`fnm env`"
+      fnm install --latest
     fi
-
-- name: "Installing node"
-  ansible.builtin.shell: |
-    fnm install --latest
