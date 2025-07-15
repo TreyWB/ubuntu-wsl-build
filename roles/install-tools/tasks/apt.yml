@@ -9,9 +9,8 @@
       - sqlite3
       - pipenv
       - htop
-      - neo4j
       - gh
       - build-essential
       - gcc
     state: present
-    become: true
+  become: true
