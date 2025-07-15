@@ -10,3 +10,7 @@
       eval "`fnm env`"
       fnm install --latest
     fi
+
+- name: "Installing node"
+  ansible.builtin.shell: |
+    /home/{{ ansible_user_id }}/.local/share/fnm/fnm install --latest
