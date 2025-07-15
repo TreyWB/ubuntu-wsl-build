@@ -1,4 +1,7 @@
 ---
+- name: "Installing tools from apt"
+  include_tasks: "apt.yml"
+
 - name: "Installing golang"
   include_tasks: "golang.yml"
 
